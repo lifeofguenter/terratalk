@@ -1,3 +1,4 @@
+import os
 import setuptools
 
 with open('README.md', 'r') as fh:
@@ -5,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='terratalk',
-    version='0.0.1',
+    version=os.getenv('TRAVIS_TAG'),
     author='Gunter Grodotzki',
     author_email='gunter@grodotzki.co.za',
     description='Terraform commentator.',
