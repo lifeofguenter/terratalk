@@ -6,7 +6,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='terratalk',
-    version=os.getenv('TRAVIS_TAG'),
+    version='0.0.3',
     author='Gunter Grodotzki',
     author_email='gunter@grodotzki.co.za',
     description='Terraform commentator.',

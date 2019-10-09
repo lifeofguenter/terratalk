@@ -40,7 +40,6 @@ class BitbucketServer:
         values = []
 
         while True:
-            print(f'{url}?{urllib.parse.urlencode(params)}')
             r = requests.get(url, params=params, auth=(self.username, self.password))
             buf = r.json()
 
