@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='terratalk',
-    version='0.0.0',
+    version='0.0.1',
     author='Gunter Grodotzki',
     author_email='gunter@grodotzki.co.za',
     description='Terraform commentator.',
