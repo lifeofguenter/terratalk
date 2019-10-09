@@ -23,7 +23,7 @@ def cli():
 @click.option('--pull-request-id')
 def comment(server, username, password, workspace, project_key, repository_slug, pull_request_id):
 
-    if project_key is None and repository_slug is None and pull_request_id is None and os.getenv('CHANGE_URL') is not None:
+    if server is None and project_key is None and repository_slug is None and pull_request_id is None and os.getenv('CHANGE_URL') is not None:
         m = re.match(r'\Ahttps?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
         server = m.group(1)
         project_key = m.group(2)
