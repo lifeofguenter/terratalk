@@ -24,7 +24,7 @@ def cli():
 def comment(server, username, password, workspace, project_key, repository_slug, pull_request_id):
 
     if server is None and project_key is None and repository_slug is None and pull_request_id is None and os.getenv('CHANGE_URL') is not None:
-        m = re.match(r'\Ahttps?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
+        m = re.match(r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
         server = m.group(1)
         project_key = m.group(2)
         repository_slug = m.group(3)
