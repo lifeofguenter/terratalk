@@ -1,5 +1,6 @@
 import requests
 import urllib.parse
+from time import sleep
 
 
 class BitbucketServer:
@@ -38,10 +39,17 @@ class BitbucketServer:
 
     def paginator(self, url, params={}):
         values = []
+        retries = 0
 
         while True:
             r = requests.get(url, params=params, auth=(self.username, self.password))
             buf = r.json()
+
+            if 'values' not in buf and retries < 3:
+                print(buf)
+                retries = retries + 1
+                sleep(1)
+                continue
 
             values += buf['values']
 
@@ -49,5 +57,7 @@ class BitbucketServer:
                 break
             else:
                 params['start'] = buf['nextPageStart']
+
+            retries = 0
 
         return values
