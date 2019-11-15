@@ -63,5 +63,17 @@ def comment(server, username, password, workspace, project_key, repository_slug,
 ''')
 
 
+@cli.command()
+@click.option('-w', '--workspace')
+def output(workspace):
+    tf = Terraform()
+    plan_output = tf.show(workspace + '.plan')
+
+    if plan_output == '' or plan_output.lstrip().startswith('This plan does nothing.'):
+        print('[terratalk] this plan does nothing')
+    else:
+        print(plan_output)
+
+
 if __name__ == '__main__':
     cli()
