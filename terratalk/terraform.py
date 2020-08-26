@@ -1,27 +1,32 @@
+import re
 import subprocess
+
 
 class Terraform:
 
-    def show(self, plan_file):
-        filtered_plan_output = None
+    @staticmethod
+    def show(plan_file):
 
         try:
-            plan_output = subprocess.Popen([
+            tf_show = subprocess.run([
                 'terraform',
                 'show',
                 '-no-color',
                 plan_file,
-            ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            filtered_plan_output = subprocess.check_output([
-                'grep',
-                '-E',
-                '^\\s*# ',
-            ], stdin=plan_output.stdout)
-            plan_output.wait()
+            ], capture_output=True, check=True)
         except subprocess.CalledProcessError as exc:
-            filtered_plan_output = exc.output
+            return exc.stderr.decode()
 
-        if filtered_plan_output is None:
+        raw_plan_output = tf_show.stdout.decode()
+        plan_output = ''
+
+        if re.search(r'Plan: 0 to add, 0 to change, 0 to destroy.\Z', raw_plan_output.rstrip(), re.IGNORECASE):
             return ''
 
-        return filtered_plan_output.decode()
+        matches = re.findall(r'^(?:[\t ]*(#.*)|(Plan: \d+ to add, \d+ to change, \d+ to destroy\.))$', raw_plan_output.rstrip(), re.IGNORECASE|re.MULTILINE)
+        for m in matches:
+            if m[1] != '':
+                plan_output += "\n"
+            plan_output += ''.join(m) + "\n"
+
+        return plan_output

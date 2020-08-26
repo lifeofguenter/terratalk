@@ -4,7 +4,7 @@
 
 .PHONY: dev
 dev:
-	pip install .
+	pip install . --no-cache-dir
 
 
 .PHONY: build
