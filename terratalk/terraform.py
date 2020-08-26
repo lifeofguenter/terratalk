@@ -13,7 +13,7 @@ class Terraform:
                 'show',
                 '-no-color',
                 plan_file,
-            ], capture_output=True, check=True, cwd='/Users/guenter/Projects/op/app-foobar/infra')
+            ], capture_output=True, check=True)
         except subprocess.CalledProcessError as exc:
             return exc.stderr.decode()
 
