@@ -1,10 +1,8 @@
 import os
 import re
-import subprocess
 
 import click
 
-from terratalk.bitbucket_server import BitbucketServer
 from terratalk.terraform import Terraform
 
 
@@ -14,47 +12,71 @@ def cli():
 
 
 @cli.command()
-@click.option('-s', '--server')
-@click.option('-u', '--username')
-@click.option('-p', '--password')
 @click.option('-w', '--workspace')
-@click.option('--project-key')
-@click.option('--repository-slug')
-@click.option('--pull-request-id')
-def comment(server, username, password, workspace, project_key, repository_slug, pull_request_id):
+def comment(workspace):
 
-    if server is None and project_key is None and repository_slug is None and pull_request_id is None and os.getenv('CHANGE_URL') is not None:
-        m = re.match(r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
+    m = re.search(r'\Ahttps://github.com/([^/]+)/([^/]+)/pull/(\d+)\Z', os.getenv('CHANGE_URL'), re.IGNORECASE)
+    if not m:
+        m = re.search(r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
+
+    if len(m.groups()) == 3:
+        server = 'github'
+        project_key = m.group(1)
+        repository_slug = m.group(2)
+        pull_request_id = int(m.group(3))
+
+    else:
         server = m.group(1)
         project_key = m.group(2)
         repository_slug = m.group(3)
-        pull_request_id = m.group(4)
+        pull_request_id = int(m.group(4))
 
-    if username is None and os.getenv('STASH_USER') is not None:
-        username = os.getenv('STASH_USER')
+    if server == 'github':
+        from github import Github
 
-    if password is None and os.getenv('STASH_PASS') is not None:
-        password = os.getenv('STASH_PASS')
+        gh = Github(os.getenv('GITHUB_TOKEN'))
 
-    bs = BitbucketServer(base_url=server, username=username, password=password)
-    bs.pr(project_key=project_key, repository_slug=repository_slug, pull_request_id=pull_request_id)
+        repo = gh.get_repo(f'{project_key}/{repository_slug}')
+        issue = repo.get_issue(pull_request_id)
 
-    # delete any older comments
-    for comment in bs.comments():
-        if comment['comment']['text'].lstrip().startswith(f'[comment]: # (terratalk: {workspace})'):
-            click.echo('[terratalk] deleting comment {comment_id}'.format(comment_id=comment['id']))
-            bs.comment_delete(comment['comment']['id'], comment['comment']['version'])
+        # delete any older comments
+        for c in issue.get_comments():
+            if c.body.lstrip().startswith(f'<!-- terratalk: {workspace} -->'):
+                click.echo(f'[tf-comment-plan] deleting previous comment: {c.id}')
+                c.delete()
+
+    else:
+        from terratalk.bitbucket_server import BitbucketServer
+
+        bs = BitbucketServer(base_url=server, username=os.getenv('STASH_USER'), password=os.getenv('STASH_PASS'))
+        bs.pr(project_key=project_key, repository_slug=repository_slug, pull_request_id=pull_request_id)
+
+        # delete any older comments
+        for c in bs.comments():
+            if c['comment']['text'].lstrip().startswith(f'[comment]: # (terratalk: {workspace})'):
+                click.echo(f"[terratalk] deleting previous comment {c['id']}")
+                bs.comment_delete(c['comment']['id'], c['comment']['version'])
 
     # fetch terraform output
     tf = Terraform()
     plan_output = tf.show(workspace + '.plan')
 
-    if plan_output == '' or plan_output.lstrip().startswith('This plan does nothing.'):
-        print('[terratalk] this plan does nothing')
+    if plan_output == '':
+        click.echo('[terratalk] this plan does nothing')
         exit()
 
-    # https://bitbucket.org/tutorials/markdowndemo/issues/15/how-can-you-insert-comments-in-the#comment-22433250
-    bs.comment_add(f'''
+    if server == 'github':
+        issue.create_comment(f'''
+<!-- terratalk: {workspace} -->
+### tf plan output: {workspace}
+```
+{plan_output}
+```
+''')
+
+    else:
+        # https://bitbucket.org/tutorials/markdowndemo/issues/15/how-can-you-insert-comments-in-the#comment-22433250
+        bs.comment_add(f'''
 [comment]: # (terratalk: {workspace})
 ### tf plan output: {workspace}
 ```
@@ -69,10 +91,10 @@ def output(workspace):
     tf = Terraform()
     plan_output = tf.show(workspace + '.plan')
 
-    if plan_output == '' or plan_output.lstrip().startswith('This plan does nothing.'):
-        print('[terratalk] this plan does nothing')
+    if plan_output == '':
+        click.echo('[terratalk] this plan does nothing')
     else:
-        print(plan_output)
+        click.echo(plan_output)
 
 
 if __name__ == '__main__':

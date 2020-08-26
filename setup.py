@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='terratalk',
-    version='0.0.5',
+    version='0.0.6',
     author='Gunter Grodotzki',
     author_email='gunter@grodotzki.co.za',
     description='Terraform commentator.',
@@ -23,6 +23,9 @@ setuptools.setup(
         'click',
         'requests',
     ],
+    extras_require={
+        'GitHub': ['PyGithub'],
+    },
     entry_points={
         'console_scripts': [
             'terratalk = terratalk.__main__:cli',

@@ -9,12 +9,10 @@ class BitbucketServer:
         self.username = username
         self.password = password
 
-
     def pr(self, project_key=None, repository_slug=None, pull_request_id=None):
         self.project_key = project_key
         self.repository_slug = repository_slug
         self.pull_request_id = pull_request_id
-
 
     def comments(self):
         request_url = f'{self.base_url}/rest/api/1.0/projects/{self.project_key}/repos/{self.repository_slug}/pull-requests/{self.pull_request_id}/activities'
@@ -25,7 +23,6 @@ class BitbucketServer:
 
         return comments
 
-
     def comment_add(self, comment):
         request_url = f'{self.base_url}/rest/api/1.0/projects/{self.project_key}/repos/{self.repository_slug}/pull-requests/{self.pull_request_id}/comments'
         r = requests.post(request_url, json={'text': comment}, auth=(self.username, self.password))
@@ -35,7 +32,6 @@ class BitbucketServer:
         request_url = f'{self.base_url}/rest/api/1.0/projects/{self.project_key}/repos/{self.repository_slug}/pull-requests/{self.pull_request_id}/comments/{comment_id}'
         r = requests.delete(request_url, params={'version': version}, auth=(self.username, self.password))
         return r
-
 
     def paginator(self, url, params={}):
         values = []
