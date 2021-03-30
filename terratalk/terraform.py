@@ -23,7 +23,7 @@ class Terraform:
         if re.search(r'Plan: 0 to add, 0 to change, 0 to destroy.\Z', raw_plan_output.rstrip(), re.IGNORECASE):
             return ''
 
-        matches = re.findall(r'^(?:[\t ]*(#.*)|(Plan: \d+ to add, \d+ to change, \d+ to destroy\.))$', raw_plan_output.rstrip(), re.IGNORECASE|re.MULTILINE)
+        matches = re.findall(r'^(?:[\t ]*(# [^(].*)|(Plan: \d+ to add, \d+ to change, \d+ to destroy\.))$', raw_plan_output.rstrip(), re.IGNORECASE|re.MULTILINE)
         for m in matches:
             if m[1] != '':
                 plan_output += "\n"
