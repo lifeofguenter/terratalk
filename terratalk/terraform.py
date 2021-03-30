@@ -29,4 +29,4 @@ class Terraform:
                 plan_output += "\n"
             plan_output += ''.join(m) + "\n"
 
-        return plan_output
+        return plan_output.rstrip()
