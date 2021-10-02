@@ -5,10 +5,10 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='terratalk',
-    version='0.0.7',
-    author='Gunter Grodotzki',
-    author_email='gunter@grodotzki.co.za',
-    description='Terraform commentator.',
+    version='0.1.0',
+    author='Günter Grodotzki',
+    author_email='gunter@grodotzki.com',
+    description='A Terraform commentator.',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/lifeofguenter/terratalk',

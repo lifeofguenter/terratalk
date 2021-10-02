@@ -1,5 +1,5 @@
- .PHONY: all
- all:
+.PHONY: all
+all:
 
 
 .PHONY: dev
@@ -11,6 +11,15 @@ dev:
 build:
 	pip install -r requirements_dev.txt
 	python setup.py sdist bdist_wheel
+
+
+.PHONY: lint
+lint:
+	flake8 terratalk/
+
+
+.PHONY: test
+test: lint
 
 
 .PHONY: publish

@@ -15,9 +15,18 @@ def cli():
 @click.option('-w', '--workspace')
 def comment(workspace):
 
-    m = re.search(r'\Ahttps://github.com/([^/]+)/([^/]+)/pull/(\d+)\Z', os.getenv('CHANGE_URL'), re.IGNORECASE)
+    m = re.search(
+        r'\Ahttps://github.com/([^/]+)/([^/]+)/pull/(\d+)\Z',
+        os.getenv('CHANGE_URL'),
+        re.IGNORECASE,
+    )
     if not m:
-        m = re.search(r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)', os.getenv('CHANGE_URL'), re.IGNORECASE)
+        m = re.search(
+            r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/'
+            r'pull-requests/(\d+)',
+            os.getenv('CHANGE_URL'),
+            re.IGNORECASE,
+        )
 
     if len(m.groups()) == 3:
         server = 'github'
@@ -42,18 +51,30 @@ def comment(workspace):
         # delete any older comments
         for c in issue.get_comments():
             if c.body.lstrip().startswith(f'<!-- terratalk: {workspace} -->'):
-                click.echo(f'[tf-comment-plan] deleting previous comment: {c.id}')
+                click.echo(
+                    f'[tf-comment-plan] deleting previous comment: {c.id}'
+                )
                 c.delete()
 
     else:
         from terratalk.bitbucket_server import BitbucketServer
 
-        bs = BitbucketServer(base_url=server, username=os.getenv('STASH_USER'), password=os.getenv('STASH_PASS'))
-        bs.pr(project_key=project_key, repository_slug=repository_slug, pull_request_id=pull_request_id)
+        bs = BitbucketServer(
+            base_url=server,
+            username=os.getenv('STASH_USER'),
+            password=os.getenv('STASH_PASS'),
+        )
+        bs.pr(
+            project_key=project_key,
+            repository_slug=repository_slug,
+            pull_request_id=pull_request_id,
+        )
 
         # delete any older comments
         for c in bs.comments():
-            if c['comment']['text'].lstrip().startswith(f'[comment]: # (terratalk: {workspace})'):
+            if c['comment']['text'].lstrip().startswith(
+                f'[comment]: # (terratalk: {workspace})'
+            ):
                 click.echo(f"[terratalk] deleting previous comment {c['id']}")
                 bs.comment_delete(c['comment']['id'], c['comment']['version'])
 
