@@ -3,7 +3,7 @@ import re
 
 import click
 
-from terratalk.terraform import Terraform
+from terratalk.terraform_out import TerraformOut
 
 
 @click.group()
@@ -79,10 +79,9 @@ def comment(workspace):
                 bs.comment_delete(c['comment']['id'], c['comment']['version'])
 
     # fetch terraform output
-    tf = Terraform()
-    plan_output = tf.show(workspace + '.plan')
+    tf = TerraformOut(workspace + '.plan')
 
-    if plan_output == '':
+    if tf.does_nothing():
         click.echo('[terratalk] this plan does nothing')
         exit()
 
@@ -91,7 +90,7 @@ def comment(workspace):
 <!-- terratalk: {workspace} -->
 ### tf plan output: {workspace}
 ```
-{plan_output}
+{tf.show()}
 ```
 ''')
 
@@ -101,7 +100,7 @@ def comment(workspace):
 [comment]: # (terratalk: {workspace})
 ### tf plan output: {workspace}
 ```
-{plan_output}
+{tf.show()}
 ```
 ''')
 
@@ -109,13 +108,12 @@ def comment(workspace):
 @cli.command()
 @click.option('-w', '--workspace')
 def output(workspace):
-    tf = Terraform()
-    plan_output = tf.show(workspace + '.plan')
+    tf = TerraformOut(workspace + '.plan')
 
-    if plan_output == '':
+    if tf.does_nothing():
         click.echo('[terratalk] this plan does nothing')
     else:
-        click.echo(plan_output)
+        click.echo(tf.show())
 
 
 if __name__ == '__main__':

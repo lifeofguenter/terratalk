@@ -5,6 +5,7 @@
 
 /.pytest_cache/
 /.venv/
+/.coverage
 
 /build/
 /dist/

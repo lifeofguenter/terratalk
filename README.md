@@ -1,6 +1,7 @@
 # terratalk
 
-[![Build Status](https://travis-ci.org/lifeofguenter/terratalk.svg?branch=master)](https://travis-ci.org/lifeofguenter/terratalk)
+[![Build Status](https://app.travis-ci.com/lifeofguenter/terratalk.svg?branch=main)](https://app.travis-ci.com/lifeofguenter/terratalk)
+[![Coverage Status](https://coveralls.io/repos/github/lifeofguenter/terratalk/badge.svg)](https://coveralls.io/github/lifeofguenter/terratalk)
 [![PyPI](https://img.shields.io/pypi/v/terratalk.svg)](https://pypi.org/project/terratalk/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/terratalk)
 [![License](https://img.shields.io/github/license/lifeofguenter/terratalk.svg)](LICENSE)
