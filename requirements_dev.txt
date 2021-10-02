@@ -1,4 +1,5 @@
-setuptools
-wheel
-twine
+coveralls
 flake8
+setuptools
+twine
+wheel
