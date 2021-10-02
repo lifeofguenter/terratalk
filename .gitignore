@@ -1,8 +1,9 @@
 .DS_Store
-/.env
-
 /.idea/
 /.vscode/
+/.env
+
+/.pytest_cache/
 /.venv/
 
 /build/
