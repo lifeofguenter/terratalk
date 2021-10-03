@@ -1,5 +1,7 @@
+click
 coveralls
 flake8
+requests
 setuptools
 twine
 wheel

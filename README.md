@@ -60,7 +60,7 @@ $ terratalk comment -w WORKSPACE
 
 ## Results
 
-![terratalk on Bitbucket Server](docs/images/terratalk-on-bitbucket-server.png "terratalk on Bitbucket Server")
+![terratalk on Bitbucket Server](https://raw.githubusercontent.com/lifeofguenter/terratalk/main/docs/images/terratalk-on-bitbucket-server.png "terratalk on Bitbucket Server")
 
 ## License
 

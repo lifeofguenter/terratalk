@@ -1,3 +1,4 @@
+import os
 import unittest
 
 from terratalk.terraform_out import TerraformOut
@@ -36,6 +37,7 @@ Terraform will perform the following actions:
 Plan: 1 to add, 0 to change, 0 to destroy.
 '''
 
+        self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
 # aws_key_pair.deployer will be created
 
@@ -66,6 +68,7 @@ Your configuration already matches the changes detected above. If you'd like to 
   terraform apply -refresh-only
 '''
 
+        self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
 # aws_key_pair.deployer has been changed
 '''.strip())
@@ -93,11 +96,30 @@ Terraform will perform the following actions:
 
 Plan: 0 to add, 1 to change, 0 to destroy.
 '''
+
+        self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
 # aws_key_pair.deployer will be updated in-place
 
 Plan: 0 to add, 1 to change, 0 to destroy.
 '''.strip())
+
+    def test_cli_error(self):
+        tf = TerraformOut('test.plan')
+        self.assertEqual(tf.show().startswith(
+            "Terraform couldn't read the given file as a state or plan file."
+        ), True)
+
+    def test_cli(self):
+        cwd = os.getcwd()
+        os.chdir('tests')
+        tf = TerraformOut('test.plan')
+        self.assertEqual(tf.show(), '''
+# null_resource.foobar will be created
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+'''.strip())
+        os.chdir(cwd)
 
 
 if __name__ == '__main__':
