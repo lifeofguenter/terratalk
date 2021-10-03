@@ -33,7 +33,7 @@ test: lint
 
 ifeq ($(CI),true)
 	curl -sSLfo terraform.zip https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(TRAVIS_OS_NAME)_$(TRAVIS_CPU_ARCH).zip
-	unzip terraform.zip -d /usr/local/bin/
+	unzip terraform.zip -d $(HOME)/bin/
 	rm terraform.zip
 endif
 	cd '$(CURDIR)/tests' && rm *.plan && terraform init && terraform plan -out test.plan
