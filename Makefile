@@ -36,7 +36,7 @@ ifeq ($(CI),true)
 	unzip terraform.zip -d $(HOME)/bin/
 	rm terraform.zip
 endif
-	cd '$(CURDIR)/tests' && rm *.plan && terraform init && terraform plan -out test.plan
+	cd '$(CURDIR)/tests' && rm -f *.plan && terraform init && terraform plan -out test.plan
 
 ifeq ($(TRAVIS_PYTHON_VERSION),3.9)
 	coverage run --source=terratalk -m unittest discover
