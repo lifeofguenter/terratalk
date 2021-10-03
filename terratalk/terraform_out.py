@@ -4,12 +4,11 @@ import subprocess
 
 class TerraformOut:
 
-    plan_file = None
-    _raw_output = None
-    _parsed_output = None
-
     def __init__(self, plan_file: str) -> None:
         self.plan_file = plan_file
+        self._plan_status = True
+        self._raw_output = None
+        self._parsed_output = None
 
     def show(self) -> str:
         if not self._raw_output:
@@ -27,6 +26,9 @@ class TerraformOut:
 
     def _parse_output(self) -> str:
         plan_output = ''
+
+        if not self._plan_status:
+            return self._raw_output
 
         if re.search(
             r'Plan: 0 to add, 0 to change, 0 to destroy.\Z',
@@ -58,6 +60,7 @@ class TerraformOut:
                 self.plan_file,
             ], capture_output=True, check=True)
         except subprocess.CalledProcessError as exc:
+            self._plan_status = False
             return exc.stderr.decode()
 
         return buf.stdout.decode()

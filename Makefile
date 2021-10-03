@@ -1,3 +1,7 @@
+SHELL := bash
+TERRAFORM_VERSION := 1.0.8
+
+
 .PHONY: all
 all:
 
@@ -26,6 +30,14 @@ lint:
 test: lint
 	$(info )
 	$(info 🧪 testing...)
+
+ifeq ($(CI),true)
+	curl -sSLfo terraform.zip https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(TRAVIS_OS_NAME)_$(TRAVIS_CPU_ARCH).zip
+	unzip terraform.zip -d /usr/local/bin/
+	rm terraform.zip
+endif
+	cd '$(CURDIR)/tests' && rm *.plan && terraform init && terraform plan -out test.plan
+
 ifeq ($(TRAVIS_PYTHON_VERSION),3.9)
 	coverage run --source=terratalk -m unittest discover
 	coveralls
