@@ -46,7 +46,7 @@ Plan: 1 to add, 0 to change, 0 to destroy.
 
         self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
-+ aws_key_pair.deployer will be created
++  aws_key_pair.deployer will be created
 
 Plan: 1 to add, 0 to change, 0 to destroy.
 '''.strip())
@@ -77,7 +77,7 @@ Your configuration already matches the changes detected above. If you'd like to 
 
         self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
-# aws_key_pair.deployer has been changed
+#  aws_key_pair.deployer has been changed
 '''.strip())
 
     def test_update(self):
@@ -106,7 +106,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.
 
         self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
-@ aws_key_pair.deployer will be updated in-place
+@  aws_key_pair.deployer will be updated in-place
 
 Plan: 0 to add, 1 to change, 0 to destroy.
 '''.strip())
@@ -133,9 +133,23 @@ Changes to Outputs:
 
         self.assertEqual(tf.does_nothing(), False)
         self.assertEqual(tf.show(), '''
-- aws_ecs_cluster.foobar will be destroyed
+-  aws_ecs_cluster.foobar will be destroyed
 
 Plan: 0 to add, 0 to change, 1 to destroy.
+'''.strip())
+
+    def test_replace(self):
+        tf = TerraformOut('foo.plan')
+        tf._raw_output = '''
+  # docker_container.service must be replaced
+
+Plan: 1 to add, 0 to change, 1 to destroy.
+'''
+
+        self.assertEqual(tf.show(), '''
+-+ docker_container.service must be replaced
+
+Plan: 1 to add, 0 to change, 1 to destroy.
 '''.strip())
 
     def test_cli_error(self):
@@ -149,7 +163,7 @@ Plan: 0 to add, 0 to change, 1 to destroy.
         os.chdir('tests')
         tf = TerraformOut('test.plan')
         self.assertEqual(tf.show(), '''
-+ null_resource.foobar will be created
++  null_resource.foobar will be created
 
 Plan: 1 to add, 0 to change, 0 to destroy.
 '''.strip())

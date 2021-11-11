@@ -18,7 +18,7 @@ class TestMain(unittest.TestCase):
         runner = CliRunner()
         result = runner.invoke(__main__.cli, ['output', '-w', 'test'])
         self.assertEqual(result.output, '''
-+ null_resource.foobar will be created
++  null_resource.foobar will be created
 
 Plan: 1 to add, 0 to change, 0 to destroy.
 '''.lstrip())

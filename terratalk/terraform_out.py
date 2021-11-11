@@ -5,9 +5,10 @@ import subprocess
 class TerraformOut:
 
     PREFIXES = {
-        'created': '+',
-        'destroyed': '-',
-        'in-place': '@',
+        'created':      '+ ',
+        'destroyed':    '- ',
+        'in-place':     '@ ',
+        'replaced':     '-+',
     }
 
     def __init__(self, plan_file: str) -> None:
@@ -80,4 +81,4 @@ class TerraformOut:
         if verb in self.PREFIXES:
             return self.PREFIXES[verb]
 
-        return '#'
+        return '# '
