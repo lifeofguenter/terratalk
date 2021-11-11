@@ -1,5 +1,5 @@
 SHELL := bash
-TERRAFORM_VERSION := 1.0.8
+TERRAFORM_VERSION := 1.0.11
 
 
 .PHONY: all
@@ -42,7 +42,8 @@ ifeq ($(TRAVIS_PYTHON_VERSION),3.9)
 	coverage run --source=terratalk -m unittest discover
 	coveralls
 else
-	python -m unittest discover
+	coverage run --source=terratalk -m unittest discover
+	coverage report --skip-covered --show-missing
 endif
 
 .PHONY: publish

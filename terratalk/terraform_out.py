@@ -4,6 +4,12 @@ import subprocess
 
 class TerraformOut:
 
+    PREFIXES = {
+        'created': '+',
+        'destroyed': '-',
+        'in-place': '@',
+    }
+
     def __init__(self, plan_file: str) -> None:
         self.plan_file = plan_file
         self._plan_status = True
@@ -30,24 +36,29 @@ class TerraformOut:
         if not self._plan_status:
             return self._raw_output
 
-        if re.search(
-            r'Plan: 0 to add, 0 to change, 0 to destroy.\Z',
-            self._raw_output.rstrip(),
-            re.IGNORECASE,
-        ):
-            return ''
-
         matches = re.findall(
-            r'^(?:[\t ]*(# [^(].*)|'
-            r'(Plan: \d+ to add, \d+ to change, \d+ to destroy\.))$',
+            r'^[\t ]*# ([^(].*?) ([a-z-]+)$',
             self._raw_output.rstrip(),
             re.IGNORECASE | re.MULTILINE,
         )
 
         for m in matches:
-            if m[1] != '':
-                plan_output += "\n"
-            plan_output += ''.join(m) + "\n"
+            plan_output += f"{self._prefix(m[1])} {' '.join(m)}\n"
+
+        match = re.search(
+            r'Plan: (\d+) to add, (\d+) to change, (\d+) to destroy\.$',
+            self._raw_output.rstrip(),
+            re.IGNORECASE | re.MULTILINE,
+        )
+
+        if not match and not matches:
+            return ''
+
+        elif match and sum([int(s) for s in match.group(1, 2, 3)]) == 0:
+            return ''
+
+        elif match:
+            plan_output += "\n" + match.group(0)
 
         return plan_output.rstrip()
 
@@ -64,3 +75,9 @@ class TerraformOut:
             return exc.stderr.decode()
 
         return buf.stdout.decode()
+
+    def _prefix(self, verb: str) -> str:
+        if verb in self.PREFIXES:
+            return self.PREFIXES[verb]
+
+        return '#'
