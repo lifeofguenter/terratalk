@@ -89,7 +89,7 @@ def comment(workspace):
         issue.create_comment(f'''
 <!-- terratalk: {workspace} -->
 ### tf plan output: {workspace}
-```
+```diff
 {tf.show()}
 ```
 ''')
@@ -99,7 +99,7 @@ def comment(workspace):
         bs.comment_add(f'''
 [comment]: # (terratalk: {workspace})
 ### tf plan output: {workspace}
-```
+```diff
 {tf.show()}
 ```
 ''')
