@@ -3,10 +3,12 @@ import re
 
 import click
 
+from terratalk import __version__ as terratalk_version
 from terratalk.terraform_out import TerraformOut
 
 
 @click.group()
+@click.version_option(terratalk_version)
 def cli():
     pass
 

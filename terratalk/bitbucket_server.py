@@ -3,7 +3,7 @@ from time import sleep
 
 
 class BitbucketServer:
-    def __init__(self, base_url, username, password):
+    def __init__(self, base_url: str, username: str, password: str) -> None:
         self.base_url = f'{base_url}/rest/api/1.0'
         self.username = username
         self.password = password
@@ -27,7 +27,7 @@ class BitbucketServer:
 
         return comments
 
-    def comment_add(self, comment):
+    def comment_add(self, comment: str):
         request_url = f'{self.base_url}/projects/{self.project_key}/repos/' \
                       f'{self.repository_slug}/pull-requests/' \
                       f'{self.pull_request_id}/comments'
