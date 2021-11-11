@@ -11,14 +11,6 @@ into your pull-request as a comment. This allows you to have a quick feedback on
 infrastructure changes without having to leave the context of your pull-request
 view.
 
-```diff
-- c2c_deployment.kurl will be destroyed
-@ c2c_deployment_preparation.kurl must be replaced
-+ c2c_deployment_preparation.kurl will be created
-
-# Plan: 1 to add, 4 to change, 1 to destroy.
-```
-
 ## Setup
 
 ### Prerequisite
