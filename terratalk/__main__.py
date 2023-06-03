@@ -35,6 +35,12 @@ def comment(workspace):
     repository_slug = m.group(3)
     pull_request_id = int(m.group(4))
 
+    # fetch terraform output
+    tf = TerraformOut(workspace + '.plan')
+
+    if tf.does_nothing():
+        click.echo('[terratalk] this plan does nothing')
+
     if server == 'github.com':
         from github import Github
 
@@ -50,6 +56,15 @@ def comment(workspace):
                     f'[tf-comment-plan] deleting previous comment: {c.id}'
                 )
                 c.delete()
+
+        if not tf.does_nothing():
+            issue.create_comment(f'''
+<!-- terratalk: {workspace} -->
+### tf plan output: {workspace}
+```diff
+{tf.show()}
+```
+''')
 
     elif server == 'bitbucket.org':
         from terratalk.bitbucket_cloud import BitbucketCloud
@@ -71,6 +86,14 @@ def comment(workspace):
             ):
                 click.echo(f"[terratalk] deleting previous comment {c['id']}")
                 bb.comment_delete(c['id'])
+
+        if not tf.does_nothing():
+            bb.comment_add(f'''
+### tf plan output: {workspace}
+```diff
+{tf.show()}
+```
+''')
 
     else:
         from terratalk.bitbucket_server import BitbucketServer
@@ -94,33 +117,9 @@ def comment(workspace):
                 click.echo(f"[terratalk] deleting previous comment {c['id']}")
                 bs.comment_delete(c['comment']['id'], c['comment']['version'])
 
-    # fetch terraform output
-    tf = TerraformOut(workspace + '.plan')
-
-    if tf.does_nothing():
-        click.echo('[terratalk] this plan does nothing')
-        exit()
-
-    if server == 'github.com':
-        issue.create_comment(f'''
-<!-- terratalk: {workspace} -->
-### tf plan output: {workspace}
-```diff
-{tf.show()}
-```
-''')
-
-    elif server == 'bitbucket.org':
-        bb.comment_add(f'''
-### tf plan output: {workspace}
-```diff
-{tf.show()}
-```
-''')
-
-    else:
-        # https://bitbucket.org/tutorials/markdowndemo/issues/15/how-can-you-insert-comments-in-the#comment-22433250
-        bs.comment_add(f'''
+        if not tf.does_nothing():
+            # https://bitbucket.org/tutorials/markdowndemo/issues/15/how-can-you-insert-comments-in-the#comment-22433250
+            bs.comment_add(f'''
 [comment]: # (terratalk: {workspace})
 ### tf plan output: {workspace}
 ```diff

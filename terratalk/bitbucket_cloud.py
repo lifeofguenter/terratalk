@@ -66,8 +66,6 @@ class BitbucketCloud:
                 params=params,
                 auth=(self.username, self.password),
             )
-            if r.status_code != 200:
-                raise Exception(r.text)
 
             buf = r.json()
 
