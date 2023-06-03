@@ -1,7 +1,6 @@
 # terratalk
 
 [![build and publish](https://github.com/lifeofguenter/terratalk/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/lifeofguenter/terratalk/actions/workflows/build-and-publish.yml)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/lifeofguenter/terratalk.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/lifeofguenter/terratalk/context:python)
 [![Coverage Status](https://coveralls.io/repos/github/lifeofguenter/terratalk/badge.svg)](https://coveralls.io/github/lifeofguenter/terratalk)
 [![PyPI](https://img.shields.io/pypi/v/terratalk.svg)](https://pypi.org/project/terratalk/)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/terratalk)
@@ -28,13 +27,19 @@ allow `terratalk` to construct the proper API request to your SCM.
 On the build agent, install `terratalk`:
 
 ```bash
-$ sudo -H pip install terratalk
+$ pip install --user terratalk
 ```
 
 If you are using GitHub you will additionally need to install the following:
 
 ```bash
-$ sudo -H pip install PyGithub
+$ pip install --user PyGithub
+```
+
+If you are using Bitbucket Cloud you will additionally need to install the following:
+
+```bash
+$ pip install --user atlassian-python-api
 ```
 
 ### Running
@@ -50,10 +55,15 @@ $ terratalk comment -w WORKSPACE
 
 ### Supported environment variables
 
-#### Bitbucket
+#### Bitbucket Server
 
 * `STASH_USER`
 * `STASH_PASS`
+
+#### Bitbucket Cloud
+
+* `BITBUCKET_USERNAME`
+* `BITBUCKET_APP_PASSWORD`
 
 #### GitHub
 

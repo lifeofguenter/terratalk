@@ -3,12 +3,11 @@ import re
 
 import click
 
-from terratalk import __version__ as terratalk_version
 from terratalk.terraform_out import TerraformOut
 
 
 @click.group()
-@click.version_option(terratalk_version)
+@click.version_option()
 def cli():
     pass
 
@@ -18,31 +17,25 @@ def cli():
 def comment(workspace):
 
     m = re.search(
-        r'\Ahttps://github.com/([^/]+)/([^/]+)/pull/(\d+)\Z',
+        r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)',
         os.getenv('CHANGE_URL'),
         re.IGNORECASE,
     )
+
     if not m:
         m = re.search(
-            r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/'
-            r'pull-requests/(\d+)',
+            r'\Ahttps://(github\.com|bitbucket\.org)'
+            r'/([^/]+)/([^/]+)/(?:pull|pull-requests)/(\d+)\Z',
             os.getenv('CHANGE_URL'),
             re.IGNORECASE,
         )
 
-    if len(m.groups()) == 3:
-        server = 'github'
-        project_key = m.group(1)
-        repository_slug = m.group(2)
-        pull_request_id = int(m.group(3))
+    server = m.group(1)
+    project_key = m.group(2)
+    repository_slug = m.group(3)
+    pull_request_id = int(m.group(4))
 
-    else:
-        server = m.group(1)
-        project_key = m.group(2)
-        repository_slug = m.group(3)
-        pull_request_id = int(m.group(4))
-
-    if server == 'github':
+    if server == 'github.com':
         from github import Github
 
         gh = Github(os.getenv('GITHUB_TOKEN'))
@@ -57,6 +50,27 @@ def comment(workspace):
                     f'[tf-comment-plan] deleting previous comment: {c.id}'
                 )
                 c.delete()
+
+    elif server == 'bitbucket.org':
+        from terratalk.bitbucket_cloud import BitbucketCloud
+
+        bb = BitbucketCloud(
+            username=os.getenv('BITBUCKET_USERNAME'),
+            password=os.getenv('BITBUCKET_APP_PASSWORD'),
+        )
+
+        bb.pr(
+            project_key=project_key,
+            repository_slug=repository_slug,
+            pull_request_id=pull_request_id,
+        )
+
+        for c in bb.comments():
+            if c['content']['raw'].lstrip().startswith(
+                f'### tf plan output: {workspace}'
+            ):
+                click.echo(f"[terratalk] deleting previous comment {c['id']}")
+                bb.comment_delete(c['id'])
 
     else:
         from terratalk.bitbucket_server import BitbucketServer
@@ -87,9 +101,17 @@ def comment(workspace):
         click.echo('[terratalk] this plan does nothing')
         exit()
 
-    if server == 'github':
+    if server == 'github.com':
         issue.create_comment(f'''
 <!-- terratalk: {workspace} -->
+### tf plan output: {workspace}
+```diff
+{tf.show()}
+```
+''')
+
+    elif server == 'bitbucket.org':
+        bb.comment_add(f'''
 ### tf plan output: {workspace}
 ```diff
 {tf.show()}

@@ -1,1 +1,1 @@
-name = 'terratalk_tests'
+name = 'terratalk-tests'
