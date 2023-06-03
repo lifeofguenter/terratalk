@@ -59,9 +59,10 @@ class BitbucketCloud:
         values = []
         retries = 0
 
-        while True:
+        buf = {'next': url}
+        while 'next' in buf:
             r = requests.get(
-                url,
+                buf['next'],
                 params=params,
                 auth=(self.username, self.password),
             )
@@ -77,11 +78,6 @@ class BitbucketCloud:
                 continue
 
             values += buf['values']
-
-            if 'next' in buf:
-                url = buf['next']
-            else:
-                break
 
             retries = 0
 
