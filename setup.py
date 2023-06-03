@@ -1,17 +1,5 @@
-import re
-import setuptools
+from setuptools import setup, find_packages
 from distutils.util import convert_path
-
-
-def find_version():
-    with open(convert_path('terratalk/__init__.py')) as fh:
-        version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]",
-                                  fh.read(), re.M)
-
-        if version_match:
-            return version_match.group(1)
-
-    raise RuntimeError("Unable to find version string.")
 
 
 def find_description():
@@ -19,16 +7,17 @@ def find_description():
         return fh.read()
 
 
-setuptools.setup(
+setup(
     name='terratalk',
-    version=find_version(),
+    version='0.3.0',
+    py_modules=['cli'],
     author='Günter Grodotzki',
     author_email='gunter@grodotzki.com',
     description='A Terraform commentator.',
     long_description=find_description(),
     long_description_content_type='text/markdown',
     url='https://github.com/lifeofguenter/terratalk',
-    packages=setuptools.find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=['tests*']),
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
@@ -36,7 +25,7 @@ setuptools.setup(
     ],
     python_requires='>=3',
     install_requires=[
-        'click',
+        'Click',
         'requests',
     ],
     extras_require={
