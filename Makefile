@@ -13,6 +13,9 @@ else
 	TRAVIS_CPU_ARCH := arm64
 endif
 endif
+ifdef PYTHON_VERSION
+	TRAVIS_PYTHON_VERSION := $(PYTHON_VERSION)
+endif
 
 
 .PHONY: all

@@ -22,6 +22,8 @@ be installed as a plugin on your Jenkins. Alternatively you can set the
 environment variable `CHANGE_URL` to the URL of the pull-request which will
 allow `terratalk` to construct the proper API request to your SCM.
 
+GitLab is currently only supported from gitlab-pipelines.
+
 ### Installation
 
 On the build agent, install `terratalk`:
@@ -68,6 +70,10 @@ $ terratalk comment -w WORKSPACE
 #### GitHub
 
 * `GITHUB_TOKEN`
+
+#### GitLab
+
+* `GITLAB_TOKEN`
 
 ## Results
 

@@ -2,6 +2,7 @@ import os
 import unittest
 
 from click.testing import CliRunner
+
 from terratalk import __main__
 
 
