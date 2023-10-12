@@ -11,16 +11,18 @@ class PrDetails:
         self.pull_request_id = None
         self.repository_slug = None
 
-        self._resolve()
+        if not self._resolve_gitlab():
+            self._resolve()
 
-    def _resolve(self) -> None:
+    def _resolve_gitlab(self) -> bool:
         if getenv('CI_SERVER_NAME') == 'GitLab':
             self.type = 'gitlab'
             self.server = getenv('CI_SERVER_URL')
             self.project_key = int(getenv('CI_MERGE_REQUEST_PROJECT_ID'))
             self.pull_request_id = int(getenv('CI_MERGE_REQUEST_IID'))
-            return
+            return True
 
+    def _resolve(self) -> None:
         m = re.search(
             r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)'
             r'/pull-requests/(\d+)',

@@ -43,6 +43,7 @@ jobs:
         run: make test
         env:
           PYTHON_VERSION: ${{ matrix.python-version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to PyPI
         if: matrix.python-version == '3.11' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
