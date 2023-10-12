@@ -21,6 +21,7 @@ class PrDetails:
             self.project_key = int(getenv('CI_MERGE_REQUEST_PROJECT_ID'))
             self.pull_request_id = int(getenv('CI_MERGE_REQUEST_IID'))
             return True
+        return False
 
     def _resolve(self) -> None:
         m = re.search(
