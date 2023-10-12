@@ -1,5 +1,18 @@
 SHELL := bash
-TERRAFORM_VERSION := 1.1.9
+TERRAFORM_VERSION := 1.5.7
+
+
+# Github shim
+ifdef RUNNER_OS
+	TRAVIS_OS_NAME := $(shell echo -n '$(RUNNER_OS)' | tr '[:upper:]' '[:lower:]')
+endif
+ifdef RUNNER_ARCH
+ifeq (RUNNER_ARCH,X64)
+	TRAVIS_CPU_ARCH := amd64
+else
+	TRAVIS_CPU_ARCH := arm64
+endif
+endif
 
 
 .PHONY: all

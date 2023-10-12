@@ -9,7 +9,7 @@ def find_description():
 
 setup(
     name='terratalk',
-    version='0.3.0',
+    version='0.4.0',
     py_modules=['cli'],
     author='Günter Grodotzki',
     author_email='gunter@grodotzki.com',
@@ -30,6 +30,7 @@ setup(
     ],
     extras_require={
         'GitHub': ['PyGithub'],
+        'GitLab': ['python-gitlab'],
     },
     entry_points={
         'console_scripts': [
