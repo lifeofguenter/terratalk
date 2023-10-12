@@ -36,6 +36,12 @@ If you are using GitHub you will additionally need to install the following:
 $ pip install --user PyGithub
 ```
 
+If you are using GitLab you will additionally need to install the following:
+
+```bash
+$ pip install --user python-gitlab
+```
+
 ### Running
 
 Execute in the same directory, optionally with the same `TF_DATA_DIR` as you
