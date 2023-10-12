@@ -21,7 +21,8 @@ def _get_pr_details() -> dict:
 
     else:
         m = re.search(
-            r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)',
+            r'\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)'
+            r'/pull-requests/(\d+)',
             os.getenv('CHANGE_URL', ''),
             re.IGNORECASE,
         )
@@ -76,14 +77,21 @@ def comment(workspace):
     if pr_details['type'] == 'gitlab':
         # CI_SERVER_NAME=GitLab
         import gitlab
-        gl = gitlab.Gitlab(pr_details['server'], private_token=os.getenv('GITLAB_TOKEN'))
+        gl = gitlab.Gitlab(
+            pr_details['server'],
+            private_token=os.getenv('GITLAB_TOKEN'),
+        )
         gl.auth()
 
         gl_project = gl.projects.get(pr_details['project_key'], lazy=True)
-        gl_mr = gl_project.mergerequests.get(pr_details['pull_request_id'], lazy=True)
+        gl_mr = gl_project.mergerequests.get(
+            pr_details['pull_request_id'],
+            lazy=True,
+        )
         for discussion in gl_mr.discussions.list(get_all=True):
             for note in discussion.attributes['notes']:
-                if note['body'].lstrip().startswith(f'<!-- terratalk: {workspace} -->'):
+                if note['body'].lstrip().startswith(
+                   f'<!-- terratalk: {workspace} -->'):
                     disc = gl_mr.discussions.get(discussion.id)
                     disc.notes.delete(id=note['id'])
 
@@ -101,7 +109,9 @@ def comment(workspace):
 
         gh = Github(os.getenv('GITHUB_TOKEN'))
 
-        repo = gh.get_repo(f"{pr_details['project_key']}/{pr_details['repository_slug']}")
+        repo = gh.get_repo(
+            f"{pr_details['project_key']}/{pr_details['repository_slug']}"
+        )
         issue = repo.get_issue(pr_details['pull_request_id'])
 
         # delete any older comments

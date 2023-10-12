@@ -1,5 +1,5 @@
 SHELL := bash
-TERRAFORM_VERSION := 1.1.9
+TERRAFORM_VERSION := 1.5.7
 
 
 .PHONY: all
