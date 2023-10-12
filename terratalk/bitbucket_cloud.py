@@ -1,5 +1,6 @@
-import requests
 from time import sleep
+
+import requests
 
 
 class BitbucketCloud:
