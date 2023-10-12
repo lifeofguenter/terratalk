@@ -7,7 +7,7 @@ ifdef RUNNER_OS
 	TRAVIS_OS_NAME := $(shell echo -n '$(RUNNER_OS)' | tr '[:upper:]' '[:lower:]')
 endif
 ifdef RUNNER_ARCH
-ifeq (RUNNER_ARCH,X64)
+ifeq ($(RUNNER_ARCH),X64)
 	TRAVIS_CPU_ARCH := amd64
 else
 	TRAVIS_CPU_ARCH := arm64
@@ -28,6 +28,7 @@ dev:
 build:
 	$(info )
 	$(info 🛠️ building...)
+	printenv
 	pip install -r requirements_dev.txt
 	python setup.py sdist bdist_wheel
 
@@ -51,7 +52,7 @@ ifeq ($(CI),true)
 endif
 	cd '$(CURDIR)/tests' && rm -f *.plan && terraform init && terraform plan -out test.plan
 
-ifeq ($(TRAVIS_PYTHON_VERSION),3.9)
+ifeq ($(TRAVIS_PYTHON_VERSION),3.11)
 	coverage run --source=terratalk -m unittest discover
 	coveralls
 else
