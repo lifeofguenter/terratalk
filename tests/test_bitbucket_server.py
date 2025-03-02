@@ -1,6 +1,6 @@
 import unittest
 
-from terratalk.bitbucket_server import BitbucketServer
+from terratalk.drivers.bitbucket_server_comment import BitbucketServer
 
 
 class TestMain(unittest.TestCase):

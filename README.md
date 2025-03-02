@@ -55,25 +55,29 @@ $ terraform plan -out WORKSPACE.plan
 $ terratalk comment -w WORKSPACE
 ```
 
-### Supported environment variables
+### Supported providers
 
-#### Bitbucket Server
+#### Bitbucket Server (Jenkins)
 
 * `STASH_USER`
 * `STASH_PASS`
 
-#### Bitbucket Cloud
+#### Bitbucket Cloud (Jenkins)
 
 * `BITBUCKET_USERNAME`
 * `BITBUCKET_APP_PASSWORD`
 
-#### GitHub
+#### GitHub (Jenkins)
 
 * `GITHUB_TOKEN`
 
-#### GitLab
+#### GitLab (pipelines)
 
 * `GITLAB_TOKEN`
+
+#### Gitea (actions)
+
+* `TERRATALK_GITEA_TOKEN`
 
 ## Results
 

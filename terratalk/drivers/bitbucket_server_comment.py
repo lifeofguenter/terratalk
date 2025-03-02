@@ -1,6 +1,61 @@
+import re
+from os import getenv
 from time import sleep
 
+import click
 import requests
+
+from .base import CommentDriver
+from ..terraform_out import TerraformOut
+
+
+class BitbucketServerComment(CommentDriver):
+    DETECT_REGEX = re.compile(
+        r"\A(https?://.*?)/projects/([^/]+)/repos/([^/]+)/pull-requests/(\d+)",
+        re.IGNORECASE,
+    )
+
+    def add(self, workspace: str, tf_out: TerraformOut):
+        bs = BitbucketServer(
+            base_url=self.server,
+            username=getenv('STASH_USER'),
+            password=getenv('STASH_PASS'),
+        )
+        bs.pr(
+            project_key=self.project_key,
+            repository_slug=self.repository_slug,
+            pull_request_id=self.pull_request_id,
+        )
+
+        # delete any older comments
+        for c in bs.comments():
+            if c['comment']['text'].lstrip().startswith(
+                f'[comment]: # (terratalk: {workspace})'
+            ):
+                click.echo(f"[terratalk] deleting previous comment {c['id']}")
+                bs.comment_delete(c['comment']['id'], c['comment']['version'])
+
+        if not tf_out.does_nothing():
+            # https://bitbucket.org/tutorials/markdowndemo/issues/15/how-can-you-insert-comments-in-the#comment-22433250
+            bs.comment_add(f'''
+[comment]: # (terratalk: {workspace})
+### tf plan output: {workspace}
+```diff
+{tf_out.show()}
+```
+''')
+
+    def detect(self) -> bool:
+        m = self.DETECT_REGEX.search(getenv('CHANGE_URL', ''))
+        if m:
+            self.type = 'bitbucket-server'
+            self.server = m.group(1)
+            self.project_key = m.group(2)
+            self.repository_slug = m.group(3)
+            self.pull_request_id = int(m.group(4))
+            return True
+
+        return False
 
 
 class BitbucketServer:

@@ -154,7 +154,6 @@ Plan: 1 to add, 0 to change, 1 to destroy.
 
     def test_cli_error(self):
         tf = TerraformOut('test.plan')
-        tf.show()
         self.assertEqual(tf.show().lstrip().startswith(
             "Error: Failed to read the given file as a state or plan file"
         ), True)
