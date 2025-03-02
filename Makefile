@@ -50,6 +50,7 @@ test: lint
 
 ifeq ($(CI),true)
 	curl -sSLfo terraform.zip https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(TRAVIS_OS_NAME)_$(TRAVIS_CPU_ARCH).zip
+	mkdir -p $(HOME)/.local/bin/
 	unzip terraform.zip -d $(HOME)/.local/bin/
 	rm terraform.zip
 endif
