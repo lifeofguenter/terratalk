@@ -53,6 +53,7 @@ ifeq ($(CI),true)
 	mkdir -p $(HOME)/.local/bin/
 	unzip terraform.zip -d $(HOME)/.local/bin/
 	rm terraform.zip
+	pip3 install --user PyGithub python-gitlab
 endif
 	cd '$(CURDIR)/tests' && rm -f test.plan && terraform init && terraform plan -out test.plan
 
