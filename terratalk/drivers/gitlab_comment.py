@@ -23,12 +23,12 @@ class GitlabComment(CommentDriver):
         for discussion in gl_mr.discussions.list(get_all=True):
             for note in discussion.attributes['notes']:
                 if note['body'].lstrip().startswith(
-                    f'<!-- terratalk: {workspace} -->'
+                    f"<!-- terratalk: {workspace} -->"
                 ):
                     disc = gl_mr.discussions.get(discussion.id)
                     click.echo(
-                        f'[tf-comment-plan] deleting previous comment: '
-                        f'{note['id']}'
+                        f"[tf-comment-plan] deleting previous comment: "
+                        f"{note['id']}"
                     )
                     disc.notes.delete(id=note['id'])
 

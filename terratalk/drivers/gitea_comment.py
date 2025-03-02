@@ -20,7 +20,7 @@ class GiteaComment(CommentDriver):
                 f'<!-- terratalk: {workspace} -->'
             ):
                 click.echo(
-                    f'[tf-comment-plan] deleting previous comment: {c['id']}'
+                    f"[tf-comment-plan] deleting previous comment: {c['id']}"
                 )
                 gitea.comment_delete(c['id'])
 
@@ -58,18 +58,14 @@ class Gitea:
         self.pull_request_id = pull_request_id
 
     def comments(self) -> list[dict]:
-        all_comments = self.get(
-            f"repos/{self.repository_slug}/issues/comments"
-        )
-        comments = []
-        for c in all_comments:
-            if 'pull_request_url' not in c or not c['pull_request_url']:
-                continue
-
-            if c['pull_request_url'].endswith(f"/{self.pull_request_id}"):
-                comments.append(c)
-
-        return comments
+        return [
+            c for c in self.get(
+                f"repos/{self.repository_slug}/issues/comments"
+            )
+            if c.get('pull_request_url', '').endswith(
+                f"/{self.pull_request_id}"
+            )
+        ]
 
     def comment_delete(self, comment_id: int):
         self.delete(
