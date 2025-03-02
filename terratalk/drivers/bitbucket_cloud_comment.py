@@ -1,6 +1,58 @@
+import re
+from os import getenv
 from time import sleep
 
+import click
 import requests
+
+from .base import CommentDriver
+from ..terraform_out import TerraformOut
+
+
+class BitbucketCloudComment(CommentDriver):
+    DETECT_REGEX = re.compile(
+        r"\Ahttps://(bitbucket\.org)/([^/]+)/([^/]+)/pull-requests/(\d+)\Z",
+        re.IGNORECASE,
+    )
+
+    def add(self, workspace: str, tf_out: TerraformOut):
+        bb = BitbucketCloud(
+            username=getenv('BITBUCKET_USERNAME'),
+            password=getenv('BITBUCKET_APP_PASSWORD'),
+        )
+
+        bb.pr(
+            project_key=self.project_key,
+            repository_slug=self.repository_slug,
+            pull_request_id=self.pull_request_id,
+        )
+
+        for c in bb.comments():
+            if c['content']['raw'].lstrip().startswith(
+                f'### tf plan output: {workspace}'
+            ):
+                click.echo(f"[terratalk] deleting previous comment {c['id']}")
+                bb.comment_delete(c['id'])
+
+        if not tf_out.does_nothing():
+            bb.comment_add(f'''
+### tf plan output: {workspace}
+```diff
+{tf_out.show()}
+```
+''')
+
+    def detect(self) -> bool:
+        m = self.DETECT_REGEX.search(getenv('CHANGE_URL', ''))
+        if m:
+            self.server = m.group(1)
+            self.type = 'bitbucket'
+            self.project_key = m.group(2)
+            self.repository_slug = m.group(3)
+            self.pull_request_id = int(m.group(4))
+            return True
+
+        return False
 
 
 class BitbucketCloud:

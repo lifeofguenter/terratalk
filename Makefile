@@ -50,10 +50,12 @@ test: lint
 
 ifeq ($(CI),true)
 	curl -sSLfo terraform.zip https://releases.hashicorp.com/terraform/$(TERRAFORM_VERSION)/terraform_$(TERRAFORM_VERSION)_$(TRAVIS_OS_NAME)_$(TRAVIS_CPU_ARCH).zip
-	unzip terraform.zip -d $(HOME)/bin/
+	mkdir -p $(HOME)/.local/bin/
+	unzip terraform.zip -d $(HOME)/.local/bin/
 	rm terraform.zip
+	pip3 install --user PyGithub python-gitlab
 endif
-	cd '$(CURDIR)/tests' && rm -f *.plan && terraform init && terraform plan -out test.plan
+	cd '$(CURDIR)/tests' && rm -f test.plan && terraform init && terraform plan -out test.plan
 
 ifeq ($(TRAVIS_PYTHON_VERSION),3.11)
 	coverage run --source=terratalk -m unittest discover

@@ -1,6 +1,6 @@
 import unittest
 
-from terratalk.bitbucket_server import BitbucketServer
+from terratalk.drivers.bitbucket_server_comment import BitbucketServer
 
 
 class TestMain(unittest.TestCase):
@@ -23,7 +23,7 @@ class TestMain(unittest.TestCase):
             pull_request_id=pull_request_id,
         )
 
-        self.assertEqual(bs.base_url, f'{base_url}/rest/api/1.0')
+        self.assertEqual(bs.base_url, f"{base_url}/rest/api/1.0")
         self.assertEqual(bs.username, username)
         self.assertEqual(bs.password, password)
         self.assertEqual(bs.project_key, project_key)

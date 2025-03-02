@@ -15,6 +15,11 @@ class TestMain(unittest.TestCase):
     def tearDown(self) -> None:
         os.chdir(self.cwd)
 
+    def test_comment_nothing(self):
+        runner = CliRunner()
+        result = runner.invoke(__main__.cli, ['comment', '-w', 'nothing'])
+        self.assertEqual(result.output, '[terratalk] this plan does nothing\n')
+
     def test_output(self):
         runner = CliRunner()
         result = runner.invoke(__main__.cli, ['output', '-w', 'test'])
