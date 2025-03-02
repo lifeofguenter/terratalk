@@ -8,14 +8,17 @@ from ..terraform_out import TerraformOut
 
 
 class GitlabComment(CommentDriver):
-    def add(self, workspace: str, tf_out: TerraformOut):
-        gl = gitlab.Gitlab(
+    def __init__(self):
+        super().__init__()
+        self.gl = gitlab.Gitlab(
             self.server,
             private_token=getenv('GITLAB_TOKEN'),
         )
-        gl.auth()
 
-        gl_project = gl.projects.get(self.project_key, lazy=True)
+    def add(self, workspace: str, tf_out: TerraformOut):
+        self.gl.auth()
+
+        gl_project = self.gl.projects.get(self.project_key, lazy=True)
         gl_mr = gl_project.mergerequests.get(
             self.pull_request_id,
             lazy=True,
