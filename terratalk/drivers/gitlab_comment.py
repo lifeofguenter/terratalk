@@ -1,24 +1,20 @@
 from os import getenv
 
 import click
-import gitlab
 
 from .base import CommentDriver
 from ..terraform_out import TerraformOut
 
 
 class GitlabComment(CommentDriver):
-    def __init__(self):
-        super().__init__()
-        self.gl = gitlab.Gitlab(
+    def add(self, workspace: str, tf_out: TerraformOut):
+        import gitlab
+        gl = gitlab.Gitlab(
             self.server,
             private_token=getenv('GITLAB_TOKEN'),
         )
 
-    def add(self, workspace: str, tf_out: TerraformOut):
-        self.gl.auth()
-
-        gl_project = self.gl.projects.get(self.project_key, lazy=True)
+        gl_project = gl.projects.get(self.project_key, lazy=True)
         gl_mr = gl_project.mergerequests.get(
             self.pull_request_id,
             lazy=True,

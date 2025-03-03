@@ -9,7 +9,7 @@ def find_description():
 
 setup(
     name='terratalk',
-    version='0.5.0',
+    version='0.5.1',
     py_modules=['cli'],
     author='Günter Grodotzki',
     author_email='gunter@grodotzki.com',

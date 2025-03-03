@@ -2,7 +2,6 @@ import re
 from os import getenv
 
 import click
-from github import Github
 
 from .base import CommentDriver
 from ..terraform_out import TerraformOut
@@ -15,6 +14,7 @@ class GithubComment(CommentDriver):
     )
 
     def add(self, workspace: str, tf_out: TerraformOut):
+        from github import Github
         gh = Github(getenv('GITHUB_TOKEN'))
 
         repo = gh.get_repo(
